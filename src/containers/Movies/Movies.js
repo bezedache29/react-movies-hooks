@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import H1 from '../../components/titles/H1';
 import ButtonPrimary from '../../components/buttons/ButtonPrimary'
 
@@ -13,9 +13,25 @@ const Movies = () => {
   const IMAGE_LINK = "https://image.tmdb.org/t/p/w500"
 
   const [movies, loadMovies] = useLoadData()
+  const [genre, setGenre] = useState('all')
+  // 28 Action
+  // 12 Aventure
+  // 35 Comedy
+  const isMounted = useRef(false)
 
   useEffect(() => {
     loadMovies(`${API_URL}movie/now_playing?${API_KEY}&${LANG}`)
+  }, [])
+
+  useEffect(() => {
+    if (isMounted.current) {
+      loadMovies(`${API_URL}movie/now_playing?${API_KEY}&${LANG}`, genre)
+    }
+  }, [genre])
+
+  // Bidouille pour empecher de lancer les 2 premier useEffect au mount. (utilisation de useRef)
+  useEffect(() => {
+    isMounted.current = true
   }, [])
 
   return (
@@ -24,10 +40,10 @@ const Movies = () => {
       <H1>Liste des films actuellement en salles</H1>
 
       <div className="my-3">
-        <ButtonPrimary>Tous</ButtonPrimary>
-        <ButtonPrimary>Action</ButtonPrimary>
-        <ButtonPrimary>Aventure</ButtonPrimary>
-        <ButtonPrimary>Comédie</ButtonPrimary>
+        <ButtonPrimary css={genre === 'all' ? true : false} click={() => setGenre('all')}>Tous</ButtonPrimary>
+        <ButtonPrimary css={genre === 28 ? true : false} click={() => setGenre(28)}>Action</ButtonPrimary>
+        <ButtonPrimary css={genre === 12 ? true : false} click={() => setGenre(12)}>Aventure</ButtonPrimary>
+        <ButtonPrimary css={genre === 35 ? true : false} click={() => setGenre(35)}>Comédie</ButtonPrimary>
       </div>
 
       <div className="row">
