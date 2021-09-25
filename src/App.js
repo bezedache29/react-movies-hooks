@@ -1,8 +1,9 @@
+import Movies from "./containers/Movies/Movies";
 
 function App() {
   return (
-    <div className="App">
-      Salut !
+    <div className="container">
+      <Movies />
     </div>
   );
 }
