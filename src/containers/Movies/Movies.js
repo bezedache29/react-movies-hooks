@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import H1 from '../../components/titles/H1';
 import ButtonPrimary from '../../components/buttons/ButtonPrimary'
-import axios from 'axios';
+
+// Hook perso
+import useLoadData from '../../utils/hooks/useLoadData';
 
 const Movies = () => {
 
@@ -10,23 +12,16 @@ const Movies = () => {
   const LANG = "language=fr-FR"
   const IMAGE_LINK = "https://image.tmdb.org/t/p/w500"
 
-  const [movies, setMovies] = useState([])
+  const [movies, loadMovies] = useLoadData()
 
   useEffect(() => {
-    axios.get(`${API_URL}movie/now_playing?${API_KEY}&${LANG}`)
-      .then(res => {
-        // console.log(res.data.results)
-        setMovies(res.data.results)
-      })
-      .catch(error => {
-        console.log(error);
-      })
+    loadMovies(`${API_URL}movie/now_playing?${API_KEY}&${LANG}`)
   }, [])
 
   return (
     <div className="m-2">
 
-      <H1>Liste des films</H1>
+      <H1>Liste des films actuellement en salles</H1>
 
       <div className="my-3">
         <ButtonPrimary>Tous</ButtonPrimary>
@@ -37,19 +32,17 @@ const Movies = () => {
 
       <div className="row">
         {
-          movies.map(movie => (
-            <>
-              <div className="col-12 col-sm-12 col-md-6 col-lg-4">
-                <div className="card mx-1 my-2 border-primary">
-                    <img src={IMAGE_LINK + movie.backdrop_path} className="card-img-top" alt={movie.title} />
-                    <div className="card-body">
-                      <h5 className="card-title text-truncate">{movie.title}</h5>
-                      <p className="card-text text-truncate">{movie.overview !== "" ? movie.overview : "Pas de description"}</p>
-                      <a href="#" className="btn btn-primary">Voir plus</a>
-                    </div>
+          movies && movies.map(movie => (
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4" key={movie.id}>
+              <div className="card mx-1 my-2 border-primary">
+                  <img src={IMAGE_LINK + movie.backdrop_path} className="card-img-top" alt={movie.title} />
+                  <div className="card-body">
+                    <h5 className="card-title text-truncate">{movie.title}</h5>
+                    <p className="card-text text-truncate">{movie.overview !== "" ? movie.overview : "Pas de description"}</p>
+                    <a href="#" className="btn btn-primary">Voir plus</a>
                   </div>
-              </div>
-            </>
+                </div>
+            </div>
           ))
         }
       </div>
